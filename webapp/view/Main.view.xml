@@ -1,8 +1,21 @@
 <mvc:View controllerName="tasktwo.controller.Main"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
     xmlns="sap.m">
     <Page id="page" title="{i18n>title}">
-        <Table id="booksTable" items="{/books}">
+        <Table id="booksTable" items="{/books}" mode="MultiSelect">
+            <headerToolbar>
+                <Toolbar id="tableToolbar">
+                    <Button id="addBtn" text="Add Record" press=".onAddRecord"/>
+                    <Button id="deleteBtn" text="Delete Record" press=".onDeleteRecord"/>
+                    <ToolbarSeparator id="toolbarSep"/>
+                    <Input id="nameFilter" width="12rem" placeholder="Title contains..."/>
+                    <Select id="genreFilter" items="{/genres}">
+                        <core:Item id="genreItem" key="{key}" text="{text}"/>
+                    </Select>
+                    <Button id="filterBtn" text="Filter" type="Emphasized" press=".onFilter"/>
+                </Toolbar>
+            </headerToolbar>
             <columns>
                 <Column id="colId"><Text id="hdrId" text="ID"/></Column>
                 <Column id="colName"><Text id="hdrName" text="Name"/></Column>
