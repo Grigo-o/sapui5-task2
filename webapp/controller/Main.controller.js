@@ -10,11 +10,11 @@ sap.ui.define([
     return BaseController.extend("tasktwo.controller.Main", {
         onInit() {
             const aBooks = [
-                { ID: "1", Name: "Dune", Author: "Frank Herbert", Genre: "Sci-Fi", ReleaseDate: new Date(1965, 7, 1), AvailableQuantity: 5 },
-                { ID: "2", Name: "1984", Author: "George Orwell", Genre: "Dystopian", ReleaseDate: new Date(1949, 5, 8), AvailableQuantity: 3 },
-                { ID: "3", Name: "The Hobbit", Author: "J.R.R. Tolkien", Genre: "Fantasy", ReleaseDate: new Date(1937, 8, 21), AvailableQuantity: 7 },
-                { ID: "4", Name: "Neuromancer", Author: "William Gibson", Genre: "Sci-Fi", ReleaseDate: new Date(1984, 6, 1), AvailableQuantity: 2 },
-                { ID: "5", Name: "Emma", Author: "Jane Austen", Genre: "Romance", ReleaseDate: new Date(1815, 11, 23), AvailableQuantity: 4 }
+                { ID: "1", Name: "Dune", Author: "Frank Herbert", Genre: "Sci-Fi", ReleaseDate: new Date(1965, 7, 1), AvailableQuantity: 5, editMode: false },
+                { ID: "2", Name: "1984", Author: "George Orwell", Genre: "Dystopian", ReleaseDate: new Date(1949, 5, 8), AvailableQuantity: 3, editMode: false },
+                { ID: "3", Name: "The Hobbit", Author: "J.R.R. Tolkien", Genre: "Fantasy", ReleaseDate: new Date(1937, 8, 21), AvailableQuantity: 7, editMode: false },
+                { ID: "4", Name: "Neuromancer", Author: "William Gibson", Genre: "Sci-Fi", ReleaseDate: new Date(1984, 6, 1), AvailableQuantity: 2, editMode: false },
+                { ID: "5", Name: "Emma", Author: "Jane Austen", Genre: "Romance", ReleaseDate: new Date(1815, 11, 23), AvailableQuantity: 4, editMode: false }
             ];
 
             const aGenres = [...new Set(aBooks.map((oBook) => oBook.Genre))]
@@ -28,7 +28,7 @@ sap.ui.define([
             const oModel = this.getModel();
             const aBooks = oModel.getProperty("/books");
 
-            aBooks.push({ ID: "", Name: "", Author: "", Genre: "", ReleaseDate: null, AvailableQuantity: 0 });
+            aBooks.push({ ID: "", Name: "", Author: "", Genre: "", ReleaseDate: null, AvailableQuantity: 0, editMode: false });
             oModel.setProperty("/books", aBooks);
         },
 
@@ -59,6 +59,19 @@ sap.ui.define([
             }
 
             this.byId("booksTable").getBinding("items").filter(aFilters);
+        },
+
+        onEditTitle(oEvent) {
+            this._setEditMode(oEvent, true);
+        },
+
+        onSaveTitle(oEvent) {
+            this._setEditMode(oEvent, false);
+        },
+
+        _setEditMode(oEvent, bEdit) {
+            const oContext = oEvent.getSource().getBindingContext();
+            this.getModel().setProperty(`${oContext.getPath()}/editMode`, bEdit);
         }
     });
 });
