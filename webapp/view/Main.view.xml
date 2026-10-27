@@ -23,15 +23,23 @@
                 <Column id="colGenre"><Text id="hdrGenre" text="Genre"/></Column>
                 <Column id="colDate"><Text id="hdrDate" text="Release Date"/></Column>
                 <Column id="colQty"><Text id="hdrQty" text="Available Qty"/></Column>
+                <Column id="colActions"><Text id="hdrActions" text="Actions"/></Column>
             </columns>
             <items>
                 <ColumnListItem id="bookItem">
                     <Text id="txtId" text="{ID}"/>
-                    <Text id="txtName" text="{Name}"/>
+                    <VBox id="nameBox">
+                        <Text id="txtName" text="{Name}" visible="{= !${editMode}}"/>
+                        <Input id="inpName" value="{Name}" visible="{editMode}"/>
+                    </VBox>
                     <Text id="txtAuthor" text="{Author}"/>
                     <Text id="txtGenre" text="{Genre}"/>
                     <Text id="txtDate" text="{path:'ReleaseDate', type:'sap.ui.model.type.Date', formatOptions:{style:'medium'}}"/>
                     <Text id="txtQty" text="{AvailableQuantity}"/>
+                    <HBox id="actionsBox">
+                        <Button id="editBtn" text="Edit Title" visible="{= !${editMode}}" press=".onEditTitle"/>
+                        <Button id="saveBtn" text="Save" type="Emphasized" visible="{editMode}" press=".onSaveTitle"/>
+                    </HBox>
                 </ColumnListItem>
             </items>
         </Table>
