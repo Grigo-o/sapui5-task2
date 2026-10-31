@@ -1,0 +1,32 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+    <Dialog id="addBookDialog" title="{i18n>addBookTitle}">
+        <form:SimpleForm id="addBookForm" editable="true" layout="ResponsiveGridLayout">
+            <Label id="lblId" text="{i18n>labelId}" required="true" labelFor="newId"/>
+            <Input id="newId" type="Number" value="{newBook>/ID}" valueStateText="{i18n>requiredField}"/>
+
+            <Label id="lblName" text="{i18n>labelName}" required="true" labelFor="newName"/>
+            <Input id="newName" value="{newBook>/Name}" valueStateText="{i18n>requiredField}"/>
+
+            <Label id="lblAuthor" text="{i18n>labelAuthor}" required="true" labelFor="newAuthor"/>
+            <Input id="newAuthor" value="{newBook>/Author}" valueStateText="{i18n>requiredField}"/>
+
+            <Label id="lblGenre" text="{i18n>labelGenre}" required="true" labelFor="newGenre"/>
+            <Input id="newGenre" value="{newBook>/Genre}" valueStateText="{i18n>requiredField}"/>
+
+            <Label id="lblDate" text="{i18n>labelDate}" required="true" labelFor="newDate"/>
+            <DatePicker id="newDate" dateValue="{newBook>/ReleaseDate}" valueStateText="{i18n>requiredField}"/>
+
+            <Label id="lblQty" text="{i18n>labelQty}" required="true" labelFor="newQty"/>
+            <Input id="newQty" type="Number" value="{newBook>/AvailableQuantity}" valueStateText="{i18n>invalidQty}"/>
+        </form:SimpleForm>
+        <beginButton>
+            <Button id="addBookBtn" text="{i18n>add}" type="Emphasized" press=".onConfirmAdd"/>
+        </beginButton>
+        <endButton>
+            <Button id="cancelBookBtn" text="{i18n>cancel}" press=".onCancelAdd"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
