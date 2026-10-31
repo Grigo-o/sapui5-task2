@@ -1,13 +1,13 @@
 sap.ui.define(
   [
     "./BaseController",
+    "../model/formatter",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/core/Fragment",
-    "sap/ui/model/type/Date",
   ],
-  (BaseController, JSONModel, Filter, FilterOperator, Fragment) => {
+  (BaseController, formatter, JSONModel, Filter, FilterOperator, Fragment) => {
     "use strict";
 
     const FIELD_IDS = [
@@ -20,6 +20,7 @@ sap.ui.define(
     ];
 
     return BaseController.extend("tasktwo.controller.Main", {
+      formatter: formatter,
       onInit() {
         const aBooks = [
           {
@@ -90,7 +91,10 @@ sap.ui.define(
         const aGenres = [
           ...new Set(aBooks.map((oBook) => oBook.Genre).filter(Boolean)),
         ].map((sGenre) => ({ key: sGenre, text: sGenre }));
-        aGenres.unshift({ key: "", text: "All" });
+        aGenres.unshift({
+          key: "",
+          text: this.getResourceBundle().getText("all"),
+        });
         return aGenres;
       },
 
