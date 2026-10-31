@@ -6,24 +6,24 @@
         <Table id="booksTable" items="{/books}" mode="MultiSelect">
             <headerToolbar>
                 <Toolbar id="tableToolbar">
-                    <Button id="addBtn" text="Add Record" press=".onAddRecord"/>
-                    <Button id="deleteBtn" text="Delete Record" press=".onDeleteRecord"/>
+                    <Button id="addBtn" text="{i18n>addRecord}" press=".onAddRecord"/>
+                    <Button id="deleteBtn" text="{i18n>deleteRecord}" press=".onDeleteRecord"/>
                     <ToolbarSeparator id="toolbarSep"/>
-                    <Input id="nameFilter" width="12rem" placeholder="Title contains..."/>
+                    <Input id="nameFilter" width="12rem" placeholder="{i18n>filterPlaceholder}"/>
                     <Select id="genreFilter" items="{/genres}">
                         <core:Item id="genreItem" key="{key}" text="{text}"/>
                     </Select>
-                    <Button id="filterBtn" text="Filter" type="Emphasized" press=".onFilter"/>
+                    <Button id="filterBtn" text="{i18n>filter}" type="Emphasized" press=".onFilter"/>
                 </Toolbar>
             </headerToolbar>
             <columns>
-                <Column id="colId"><Text id="hdrId" text="ID"/></Column>
-                <Column id="colName"><Text id="hdrName" text="Name"/></Column>
-                <Column id="colAuthor"><Text id="hdrAuthor" text="Author"/></Column>
-                <Column id="colGenre"><Text id="hdrGenre" text="Genre"/></Column>
-                <Column id="colDate"><Text id="hdrDate" text="Release Date"/></Column>
-                <Column id="colQty"><Text id="hdrQty" text="Available Qty"/></Column>
-                <Column id="colActions"><Text id="hdrActions" text="Actions"/></Column>
+                <Column id="colId"><Text id="hdrId" text="{i18n>labelId}"/></Column>
+                <Column id="colName"><Text id="hdrName" text="{i18n>labelName}"/></Column>
+                <Column id="colAuthor"><Text id="hdrAuthor" text="{i18n>labelAuthor}"/></Column>
+                <Column id="colGenre"><Text id="hdrGenre" text="{i18n>labelGenre}"/></Column>
+                <Column id="colDate"><Text id="hdrDate" text="{i18n>labelDate}"/></Column>
+                <Column id="colQty"><Text id="hdrQty" text="{i18n>labelQty}"/></Column>
+                <Column id="colActions"><Text id="hdrActions" text="{i18n>actions}"/></Column>
             </columns>
             <items>
                 <ColumnListItem id="bookItem">
@@ -34,11 +34,11 @@
                     </VBox>
                     <Text id="txtAuthor" text="{Author}"/>
                     <Text id="txtGenre" text="{Genre}"/>
-                    <Text id="txtDate" text="{path:'ReleaseDate', type:'sap.ui.model.type.Date', formatOptions:{style:'medium'}}"/>
+                    <Text id="txtDate" text="{path: 'ReleaseDate', formatter: '.formatter.publishedYear'}"/>
                     <Text id="txtQty" text="{AvailableQuantity}"/>
                     <HBox id="actionsBox">
-                        <Button id="editBtn" text="Edit Title" visible="{= !${editMode}}" press=".onEditTitle"/>
-                        <Button id="saveBtn" text="Save" type="Emphasized" visible="{editMode}" press=".onSaveTitle"/>
+                        <Button id="editBtn" text="{i18n>editTitle}" visible="{= !${editMode}}" press=".onEditTitle"/>
+                        <Button id="saveBtn" text="{i18n>save}" type="Emphasized" visible="{editMode}" press=".onSaveTitle"/>
                     </HBox>
                 </ColumnListItem>
             </items>
