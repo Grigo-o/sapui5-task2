@@ -1,47 +1,338 @@
-<mvc:View controllerName="tasktwo.controller.Main"
+<mvc:View
+    controllerName="tasktwo.controller.Main"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
-        <Table id="booksTable" items="{/books}" mode="MultiSelect">
-            <headerToolbar>
-                <Toolbar id="tableToolbar">
-                    <Button id="addBtn" text="{i18n>addRecord}" press=".onAddRecord"/>
-                    <Button id="deleteBtn" text="{i18n>deleteRecord}" press=".onDeleteRecord"/>
-                    <ToolbarSeparator id="toolbarSep"/>
-                    <Input id="nameFilter" width="12rem" placeholder="{i18n>filterPlaceholder}"/>
-                    <Select id="genreFilter" items="{/genres}">
-                        <core:Item id="genreItem" key="{key}" text="{text}"/>
-                    </Select>
-                    <Button id="filterBtn" text="{i18n>filter}" type="Emphasized" press=".onFilter"/>
-                </Toolbar>
-            </headerToolbar>
-            <columns>
-                <Column id="colId"><Text id="hdrId" text="{i18n>labelId}"/></Column>
-                <Column id="colName"><Text id="hdrName" text="{i18n>labelName}"/></Column>
-                <Column id="colAuthor"><Text id="hdrAuthor" text="{i18n>labelAuthor}"/></Column>
-                <Column id="colGenre"><Text id="hdrGenre" text="{i18n>labelGenre}"/></Column>
-                <Column id="colDate"><Text id="hdrDate" text="{i18n>labelDate}"/></Column>
-                <Column id="colQty"><Text id="hdrQty" text="{i18n>labelQty}"/></Column>
-                <Column id="colActions"><Text id="hdrActions" text="{i18n>actions}"/></Column>
-            </columns>
+    xmlns="sap.m"
+>
+    <Page
+        id="page"
+        title="{i18n>title}"
+    >
+        <IconTabBar
+            id="iconTabBar"
+            class="sapUiResponsiveContentPadding"
+        >
             <items>
-                <ColumnListItem id="bookItem">
-                    <Text id="txtId" text="{ID}"/>
-                    <VBox id="nameBox">
-                        <Text id="txtName" text="{Name}" visible="{= !${editMode}}"/>
-                        <Input id="inpName" value="{Name}" visible="{editMode}"/>
-                    </VBox>
-                    <Text id="txtAuthor" text="{Author}"/>
-                    <Text id="txtGenre" text="{Genre}"/>
-                    <Text id="txtDate" text="{path: 'ReleaseDate', formatter: '.formatter.publishedYear'}"/>
-                    <Text id="txtQty" text="{AvailableQuantity}"/>
-                    <HBox id="actionsBox">
-                        <Button id="editBtn" text="{i18n>editTitle}" visible="{= !${editMode}}" press=".onEditTitle"/>
-                        <Button id="saveBtn" text="{i18n>save}" type="Emphasized" visible="{editMode}" press=".onSaveTitle"/>
-                    </HBox>
-                </ColumnListItem>
+                <IconTabFilter
+                    id="tabJson"
+                    text="{i18n>tabJsonModel}"
+                    key="json"
+                >
+                    <Table
+                        id="booksTable"
+                        items="{/books}"
+                        mode="MultiSelect"
+                    >
+                        <headerToolbar>
+                            <Toolbar id="tableToolbar">
+                                <Button
+                                    id="addBtn"
+                                    text="{i18n>addRecord}"
+                                    press=".onAddRecord"
+                                />
+                                <Button
+                                    id="deleteBtn"
+                                    text="{i18n>deleteRecord}"
+                                    press=".onDeleteRecord"
+                                />
+                                <ToolbarSeparator id="toolbarSep" />
+                                <Input
+                                    id="nameFilter"
+                                    width="12rem"
+                                    placeholder="{i18n>filterPlaceholder}"
+                                />
+                                <Select
+                                    id="genreFilter"
+                                    items="{/genres}"
+                                >
+                                    <core:Item
+                                        id="genreItem"
+                                        key="{key}"
+                                        text="{text}"
+                                    />
+                                </Select>
+                                <Button
+                                    id="filterBtn"
+                                    text="{i18n>filter}"
+                                    type="Emphasized"
+                                    press=".onFilter"
+                                />
+                            </Toolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column id="colId">
+                                <Text
+                                    id="hdrId"
+                                    text="{i18n>labelId}"
+                                />
+                            </Column>
+                            <Column id="colName">
+                                <Text
+                                    id="hdrName"
+                                    text="{i18n>labelName}"
+                                />
+                            </Column>
+                            <Column id="colAuthor">
+                                <Text
+                                    id="hdrAuthor"
+                                    text="{i18n>labelAuthor}"
+                                />
+                            </Column>
+                            <Column id="colGenre">
+                                <Text
+                                    id="hdrGenre"
+                                    text="{i18n>labelGenre}"
+                                />
+                            </Column>
+                            <Column id="colDate">
+                                <Text
+                                    id="hdrDate"
+                                    text="{i18n>labelDate}"
+                                />
+                            </Column>
+                            <Column id="colQty">
+                                <Text
+                                    id="hdrQty"
+                                    text="{i18n>labelQty}"
+                                />
+                            </Column>
+                            <Column id="colActions">
+                                <Text
+                                    id="hdrActions"
+                                    text="{i18n>actions}"
+                                />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem id="bookItem">
+                                <Text
+                                    id="txtId"
+                                    text="{ID}"
+                                />
+                                <VBox id="nameBox">
+                                    <Text
+                                        id="txtName"
+                                        text="{Name}"
+                                        visible="{= !${editMode}}"
+                                    />
+                                    <Input
+                                        id="inpName"
+                                        value="{Name}"
+                                        visible="{editMode}"
+                                    />
+                                </VBox>
+                                <Text
+                                    id="txtAuthor"
+                                    text="{Author}"
+                                />
+                                <Text
+                                    id="txtGenre"
+                                    text="{Genre}"
+                                />
+                                <Text
+                                    id="txtDate"
+                                    text="{path: 'ReleaseDate', formatter: '.formatter.publishedYear'}"
+                                />
+                                <Text
+                                    id="txtQty"
+                                    text="{AvailableQuantity}"
+                                />
+                                <HBox id="actionsBox">
+                                    <Button
+                                        id="editBtn"
+                                        text="{i18n>editTitle}"
+                                        visible="{= !${editMode}}"
+                                        press=".onEditTitle"
+                                    />
+                                    <Button
+                                        id="saveBtn"
+                                        text="{i18n>save}"
+                                        type="Emphasized"
+                                        visible="{editMode}"
+                                        press=".onSaveTitle"
+                                    />
+                                </HBox>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </IconTabFilter>
+
+                <IconTabFilter
+                    id="tabV2"
+                    text="{i18n>tabODataV2}"
+                    key="odataV2"
+                >
+                    <Table
+                        id="productsV2Table"
+                        items="{odataV2Model>/Products}"
+                    >
+                        <columns>
+                            <Column id="v2ColId">
+                                <Text
+                                    id="v2HdrId"
+                                    text="{i18n>labelId}"
+                                />
+                            </Column>
+                            <Column id="v2ColName">
+                                <Text
+                                    id="v2HdrName"
+                                    text="{i18n>labelName}"
+                                />
+                            </Column>
+                            <Column id="v2ColDesc">
+                                <Text
+                                    id="v2HdrDesc"
+                                    text="{i18n>labelDescription}"
+                                />
+                            </Column>
+                            <Column id="v2ColRelease">
+                                <Text
+                                    id="v2HdrRelease"
+                                    text="{i18n>labelDate}"
+                                />
+                            </Column>
+                            <Column id="v2ColDiscontinued">
+                                <Text
+                                    id="v2HdrDiscontinued"
+                                    text="{i18n>labelDiscontinuedDate}"
+                                />
+                            </Column>
+                            <Column id="v2ColRating">
+                                <Text
+                                    id="v2HdrRating"
+                                    text="{i18n>labelRating}"
+                                />
+                            </Column>
+                            <Column id="v2ColPrice">
+                                <Text
+                                    id="v2HdrPrice"
+                                    text="{i18n>labelPrice}"
+                                />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem id="v2Item">
+                                <Text
+                                    id="v2TxtId"
+                                    text="{odataV2Model>ID}"
+                                />
+                                <Text
+                                    id="v2TxtName"
+                                    text="{odataV2Model>Name}"
+                                />
+                                <Text
+                                    id="v2TxtDesc"
+                                    text="{odataV2Model>Description}"
+                                />
+                                <Text
+                                    id="v2TxtRelease"
+                                    text="{path: 'odataV2Model>ReleaseDate', type: 'sap.ui.model.type.Date', formatOptions: {style: 'medium'}}"
+                                />
+                                <Text
+                                    id="v2TxtDiscontinued"
+                                    text="{path: 'odataV2Model>DiscontinuedDate', type: 'sap.ui.model.type.Date', formatOptions: {style: 'medium'}}"
+                                />
+                                <Text
+                                    id="v2TxtRating"
+                                    text="{odataV2Model>Rating}"
+                                />
+                                <Text
+                                    id="v2TxtPrice"
+                                    text="{odataV2Model>Price}"
+                                />
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </IconTabFilter>
+
+                <IconTabFilter
+                    id="tabV4"
+                    text="{i18n>tabODataV4}"
+                    key="odataV4"
+                >
+                    <Table
+                        id="productsV4Table"
+                        items="{odataV4Model>/Products}"
+                    >
+                        <columns>
+                            <Column id="v4ColId">
+                                <Text
+                                    id="v4HdrId"
+                                    text="{i18n>labelId}"
+                                />
+                            </Column>
+                            <Column id="v4ColName">
+                                <Text
+                                    id="v4HdrName"
+                                    text="{i18n>labelName}"
+                                />
+                            </Column>
+                            <Column id="v4ColDesc">
+                                <Text
+                                    id="v4HdrDesc"
+                                    text="{i18n>labelDescription}"
+                                />
+                            </Column>
+                            <Column id="v4ColRelease">
+                                <Text
+                                    id="v4HdrRelease"
+                                    text="{i18n>labelDate}"
+                                />
+                            </Column>
+                            <Column id="v4ColDiscontinued">
+                                <Text
+                                    id="v4HdrDiscontinued"
+                                    text="{i18n>labelDiscontinuedDate}"
+                                />
+                            </Column>
+                            <Column id="v4ColRating">
+                                <Text
+                                    id="v4HdrRating"
+                                    text="{i18n>labelRating}"
+                                />
+                            </Column>
+                            <Column id="v4ColPrice">
+                                <Text
+                                    id="v4HdrPrice"
+                                    text="{i18n>labelPrice}"
+                                />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem id="v4Item">
+                                <Text
+                                    id="v4TxtId"
+                                    text="{odataV4Model>ID}"
+                                />
+                                <Text
+                                    id="v4TxtName"
+                                    text="{odataV4Model>Name}"
+                                />
+                                <Text
+                                    id="v4TxtDesc"
+                                    text="{odataV4Model>Description}"
+                                />
+                                <Text
+                                    id="v4TxtRelease"
+                                    text="{path: 'odataV4Model>ReleaseDate', targetType: 'any', formatter: '.formatter.formatDate'}"
+                                />
+                                <Text
+                                    id="v4TxtDiscontinued"
+                                    text="{path: 'odataV4Model>DiscontinuedDate', targetType: 'any', formatter: '.formatter.formatDate'}"
+                                />
+                                <Text
+                                    id="v4TxtRating"
+                                    text="{odataV4Model>Rating}"
+                                />
+                                <Text
+                                    id="v4TxtPrice"
+                                    text="{odataV4Model>Price}"
+                                />
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </IconTabFilter>
             </items>
-        </Table>
+        </IconTabBar>
     </Page>
 </mvc:View>
