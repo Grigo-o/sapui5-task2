@@ -6,6 +6,8 @@ sap.ui.define(
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/core/Fragment",
+    "sap/ui/model/type/Date",
+    "sap/ui/model/odata/type/DateTimeOffset",
   ],
   (BaseController, formatter, JSONModel, Filter, FilterOperator, Fragment) => {
     "use strict";
