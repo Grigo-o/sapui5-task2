@@ -1,0 +1,47 @@
+[
+  {
+    "ID": 1,
+    "Name": "Whole Grain Bread",
+    "Description": "Fresh baked whole grain bread",
+    "ReleaseDate": "1992-01-01T00:00:00.000Z",
+    "DiscontinuedDate": null,
+    "Rating": 4,
+    "Price": 2.5
+  },
+  {
+    "ID": 2,
+    "Name": "Low Fat Milk",
+    "Description": "One liter of low fat milk",
+    "ReleaseDate": "1995-10-01T00:00:00.000Z",
+    "DiscontinuedDate": null,
+    "Rating": 3,
+    "Price": 3.5
+  },
+  {
+    "ID": 3,
+    "Name": "Orange Soda",
+    "Description": "Sparkling orange soda",
+    "ReleaseDate": "2000-10-01T00:00:00.000Z",
+    "DiscontinuedDate": "2010-12-31T00:00:00.000Z",
+    "Rating": 3,
+    "Price": 1.9
+  },
+  {
+    "ID": 4,
+    "Name": "Arabica Coffee Beans",
+    "Description": "Medium roast, 500 g",
+    "ReleaseDate": "2010-06-15T00:00:00.000Z",
+    "DiscontinuedDate": null,
+    "Rating": 5,
+    "Price": 12.99
+  },
+  {
+    "ID": 5,
+    "Name": "Aged Cheddar",
+    "Description": "Sharp aged cheddar cheese",
+    "ReleaseDate": "1985-03-20T00:00:00.000Z",
+    "DiscontinuedDate": "2005-12-31T00:00:00.000Z",
+    "Rating": 2,
+    "Price": 8.75
+  }
+]

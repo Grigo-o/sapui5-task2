@@ -20,10 +20,10 @@ server:
         services:
           - urlPath: /V2/OData/OData.svc
             metadataPath: ./webapp/localService/metadataV2.xml
-            mockdataPath: ./webapp/localService/data
-            generateMockData: true
+            mockdataPath: ./webapp/localService/data/v2
+            generateMockData: false
           - urlPath: /V4/OData/OData.svc
             metadataPath: ./webapp/localService/metadataV4.xml
-            mockdataPath: ./webapp/localService/data
-            generateMockData: true
+            mockdataPath: ./webapp/localService/data/v4
+            generateMockData: false
         annotations: []
