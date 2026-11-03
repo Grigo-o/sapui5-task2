@@ -5,11 +5,9 @@ sap.ui.define(
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/core/Fragment",
     "sap/ui/model/type/Date",
-    "sap/ui/model/odata/type/DateTimeOffset",
   ],
-  (BaseController, formatter, JSONModel, Filter, FilterOperator, Fragment) => {
+  (BaseController, formatter, JSONModel, Filter, FilterOperator) => {
     "use strict";
 
     const FIELD_IDS = [
@@ -23,6 +21,7 @@ sap.ui.define(
 
     return BaseController.extend("tasktwo.controller.Main", {
       formatter: formatter,
+
       onInit() {
         const aBooks = [
           {
@@ -102,13 +101,8 @@ sap.ui.define(
 
       onAddRecord() {
         if (!this._pAddDialog) {
-          this._pAddDialog = Fragment.load({
-            id: this.getView().getId(),
+          this._pAddDialog = this.loadFragment({
             name: "tasktwo.view.fragments.AddBookDialog",
-            controller: this,
-          }).then((oDialog) => {
-            this.getView().addDependent(oDialog);
-            return oDialog;
           });
         }
         this._pAddDialog.then((oDialog) => {
@@ -128,7 +122,7 @@ sap.ui.define(
         const aBooks = oModel.getProperty("/books");
 
         aBooks.push({
-          ID: oNew.ID.trim(),
+          ID: String(oNew.ID).trim(),
           Name: oNew.Name.trim(),
           Author: oNew.Author.trim(),
           Genre: oNew.Genre.trim(),
@@ -179,15 +173,20 @@ sap.ui.define(
         FIELD_IDS.forEach((sId) => this.byId(sId).setValueState("None"));
       },
 
+      onSelectionChange() {
+        this._updateDeleteButton();
+      },
+
+      _updateDeleteButton() {
+        const bHasSelection =
+          this.byId("booksTable").getSelectedItems().length > 0;
+        this.byId("deleteBtn").setEnabled(bHasSelection);
+      },
+
       onDeleteRecord() {
         if (!this._pDeleteDialog) {
-          this._pDeleteDialog = Fragment.load({
-            id: this.getView().getId(),
+          this._pDeleteDialog = this.loadFragment({
             name: "tasktwo.view.fragments.DeleteDialog",
-            controller: this,
-          }).then((oDialog) => {
-            this.getView().addDependent(oDialog);
-            return oDialog;
           });
         }
         this._pDeleteDialog.then((oDialog) => oDialog.open());
@@ -206,6 +205,7 @@ sap.ui.define(
 
         oModel.setProperty("/books", aBooks);
         oTable.removeSelections(true);
+        this._updateDeleteButton();
         this._closeDeleteDialog();
       },
 
