@@ -464,6 +464,27 @@ sap.ui.define(
         });
       },
 
+      onFilterV2(oEvent) {
+        const sValue = oEvent.getParameter("value").trim();
+        const oTable = this.byId("productsV2Table");
+        const aFilters = [];
+
+        if (sValue) {
+          aFilters.push(
+            new Filter({
+              path: "Name",
+              operator: FilterOperator.Contains,
+              value1: sValue,
+              caseSensitive: false,
+            }),
+          );
+        }
+
+        oTable.removeSelections(true);
+        this._updateDeleteV2Button();
+        oTable.getBinding("items").filter(aFilters);
+      },
+
       _setEditMode(oEvent, bEdit) {
         const oContext = oEvent.getSource().getBindingContext();
         this.getModel().setProperty(`${oContext.getPath()}/editMode`, bEdit);

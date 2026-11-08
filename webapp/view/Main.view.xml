@@ -182,6 +182,13 @@
                                     enabled="false"
                                     press=".onDeleteV2"
                                 />
+                                <ToolbarSeparator id="v2ToolbarSep" />
+                                <Input
+                                    id="productNameFilter"
+                                    width="16rem"
+                                    placeholder="{i18n>productNamePlaceholder}"
+                                    liveChange=".onFilterV2"
+                                />
                             </Toolbar>
                         </headerToolbar>
                         <columns>
@@ -228,7 +235,10 @@
                                 />
                             </Column>
                             <Column id="v2ColActions">
-                                <Text id="v2HdrActions" text="{i18n>actions}"/>
+                                <Text
+                                    id="v2HdrActions"
+                                    text="{i18n>actions}"
+                                />
                             </Column>
                         </columns>
                         <items>
@@ -261,7 +271,11 @@
                                     id="v2TxtPrice"
                                     text="{odataV2Model>Price}"
                                 />
-                                <Button id="v2EditBtn" text="{i18n>edit}" press=".onEditV2"/>
+                                <Button
+                                    id="v2EditBtn"
+                                    text="{i18n>edit}"
+                                    press=".onEditV2"
+                                />
                             </ColumnListItem>
                         </items>
                     </Table>
