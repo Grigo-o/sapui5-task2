@@ -158,7 +158,6 @@
                         </items>
                     </Table>
                 </IconTabFilter>
-
                 <IconTabFilter
                     id="tabV2"
                     text="{i18n>tabODataV2}"
@@ -228,6 +227,9 @@
                                     text="{i18n>labelPrice}"
                                 />
                             </Column>
+                            <Column id="v2ColActions">
+                                <Text id="v2HdrActions" text="{i18n>actions}"/>
+                            </Column>
                         </columns>
                         <items>
                             <ColumnListItem id="v2Item">
@@ -259,11 +261,11 @@
                                     id="v2TxtPrice"
                                     text="{odataV2Model>Price}"
                                 />
+                                <Button id="v2EditBtn" text="{i18n>edit}" press=".onEditV2"/>
                             </ColumnListItem>
                         </items>
                     </Table>
                 </IconTabFilter>
-
                 <IconTabFilter
                     id="tabV4"
                     text="{i18n>tabODataV4}"

@@ -274,14 +274,47 @@ sap.ui.define(
       },
 
       onAddV2() {
+        this._sEditPath = null;
+        this._openProductDialog({
+          ...this._getEmptyProduct(),
+          isNew: true,
+          dialogTitle: this.getResourceBundle().getText("addProductTitle"),
+        });
+      },
+
+      onEditV2(oEvent) {
+        const oContext = oEvent.getSource().getBindingContext("odataV2Model");
+        const oProduct = oContext.getObject();
+
+        this._sEditPath = oContext.getPath();
+        this._openProductDialog({
+          ID: oProduct.ID,
+          Name: oProduct.Name,
+          Description: oProduct.Description,
+          ReleaseDate: oProduct.ReleaseDate
+            ? new Date(oProduct.ReleaseDate)
+            : null,
+          DiscontinuedDate: oProduct.DiscontinuedDate
+            ? new Date(oProduct.DiscontinuedDate)
+            : null,
+          Rating: oProduct.Rating,
+          Price: oProduct.Price,
+          isNew: false,
+          dialogTitle: this.getResourceBundle().getText("editProductTitle"),
+        });
+      },
+
+      _openProductDialog(oData) {
         if (!this._pAddProductDialog) {
           this._pAddProductDialog = this.loadFragment({
             name: "tasktwo.view.fragments.AddProductDialog",
           });
         }
         this._pAddProductDialog.then((oDialog) => {
-          this.getModel("newProduct").setData(this._getEmptyProduct());
-          PRODUCT_FIELD_IDS.forEach((sId) => this.byId(sId).setValueState("None"));
+          this.getModel("newProduct").setData(oData);
+          PRODUCT_FIELD_IDS.forEach((sId) =>
+            this.byId(sId).setValueState("None"),
+          );
           oDialog.open();
         });
       },
@@ -335,34 +368,46 @@ sap.ui.define(
         const oData = this.getModel("newProduct").getData();
         const oModel = this.getModel("odataV2Model");
         const oBundle = this.getResourceBundle();
-        const sGroupId = "createProduct";
+        const bEdit = !!this._sEditPath;
+        const sGroupId = "saveProduct";
 
         if (!oModel.getDeferredGroups().includes(sGroupId)) {
           oModel.setDeferredGroups(oModel.getDeferredGroups().concat(sGroupId));
         }
 
-        oModel.create(
-          "/Products",
-          {
-            ID: parseInt(oData.ID, 10),
-            Name: oData.Name.trim(),
-            Description: oData.Description.trim(),
-            ReleaseDate: oData.ReleaseDate,
-            DiscontinuedDate: oData.DiscontinuedDate,
-            Rating: parseInt(oData.Rating, 10),
-            Price: String(oData.Price),
+        const oPayload = {
+          Name: oData.Name.trim(),
+          Description: oData.Description.trim(),
+          ReleaseDate: oData.ReleaseDate,
+          DiscontinuedDate: oData.DiscontinuedDate,
+          Rating: parseInt(oData.Rating, 10),
+          Price: String(oData.Price),
+        };
+
+        const mParameters = {
+          groupId: sGroupId,
+          success: () => {
+            MessageToast.show(
+              oBundle.getText(bEdit ? "updateSuccess" : "createSuccess"),
+            );
+            this._closeAddProductDialog();
           },
-          {
-            groupId: sGroupId,
-            success: () => {
-              MessageToast.show(oBundle.getText("createSuccess"));
-              this._closeAddProductDialog();
-            },
-            error: () => {
-              MessageBox.error(oBundle.getText("createError"));
-            },
+          error: () => {
+            MessageBox.error(
+              oBundle.getText(bEdit ? "updateError" : "createError"),
+            );
           },
-        );
+        };
+
+        if (bEdit) {
+          oModel.update(this._sEditPath, oPayload, mParameters);
+        } else {
+          oModel.create(
+            "/Products",
+            { ID: parseInt(oData.ID, 10), ...oPayload },
+            mParameters,
+          );
+        }
         oModel.submitChanges({ groupId: sGroupId });
       },
 
