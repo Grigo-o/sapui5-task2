@@ -189,6 +189,48 @@
                                     placeholder="{i18n>productNamePlaceholder}"
                                     liveChange=".onFilterV2"
                                 />
+                                <ComboBox
+                                    id="sortV2Combo"
+                                    width="14rem"
+                                    placeholder="{i18n>sortPlaceholder}"
+                                    selectionChange=".onSortV2"
+                                >
+                                    <core:Item
+                                        id="sortItemId"
+                                        key="ID"
+                                        text="{i18n>labelId}"
+                                    />
+                                    <core:Item
+                                        id="sortItemName"
+                                        key="Name"
+                                        text="{i18n>labelName}"
+                                    />
+                                    <core:Item
+                                        id="sortItemDesc"
+                                        key="Description"
+                                        text="{i18n>labelDescription}"
+                                    />
+                                    <core:Item
+                                        id="sortItemRelease"
+                                        key="ReleaseDate"
+                                        text="{i18n>labelDate}"
+                                    />
+                                    <core:Item
+                                        id="sortItemDiscontinued"
+                                        key="DiscontinuedDate"
+                                        text="{i18n>labelDiscontinuedDate}"
+                                    />
+                                    <core:Item
+                                        id="sortItemRating"
+                                        key="Rating"
+                                        text="{i18n>labelRating}"
+                                    />
+                                    <core:Item
+                                        id="sortItemPrice"
+                                        key="Price"
+                                        text="{i18n>labelPrice}"
+                                    />
+                                </ComboBox>
                             </Toolbar>
                         </headerToolbar>
                         <columns>

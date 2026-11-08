@@ -5,6 +5,7 @@ sap.ui.define(
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
+    "sap/ui/model/Sorter",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
     "sap/ui/model/type/Date",
@@ -15,6 +16,7 @@ sap.ui.define(
     JSONModel,
     Filter,
     FilterOperator,
+    Sorter,
     MessageToast,
     MessageBox,
   ) => {
@@ -483,6 +485,18 @@ sap.ui.define(
         oTable.removeSelections(true);
         this._updateDeleteV2Button();
         oTable.getBinding("items").filter(aFilters);
+      },
+
+      onSortV2(oEvent) {
+        const oSelectedItem = oEvent.getParameter("selectedItem");
+        const oBinding = this.byId("productsV2Table").getBinding("items");
+
+        if (!oSelectedItem) {
+          oBinding.sort([]);
+          return;
+        }
+
+        oBinding.sort(new Sorter(oSelectedItem.getKey(), true));
       },
 
       _setEditMode(oEvent, bEdit) {
