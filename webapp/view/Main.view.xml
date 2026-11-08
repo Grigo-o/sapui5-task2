@@ -173,6 +173,11 @@
                         <headerToolbar>
                             <Toolbar id="v2Toolbar">
                                 <Button
+                                    id="addV2Btn"
+                                    text="{i18n>addRecord}"
+                                    press=".onAddV2"
+                                />
+                                <Button
                                     id="deleteV2Btn"
                                     text="{i18n>delete}"
                                     enabled="false"

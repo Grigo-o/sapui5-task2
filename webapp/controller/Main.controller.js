@@ -29,6 +29,16 @@ sap.ui.define(
       "newQty",
     ];
 
+    const PRODUCT_FIELD_IDS = [
+      "prodId",
+      "prodName",
+      "prodDesc",
+      "prodRelease",
+      "prodDiscontinued",
+      "prodRating",
+      "prodPrice",
+    ];
+
     return BaseController.extend("tasktwo.controller.Main", {
       formatter: formatter,
 
@@ -85,6 +95,7 @@ sap.ui.define(
           new JSONModel({ books: aBooks, genres: this._buildGenres(aBooks) }),
         );
         this.setModel(new JSONModel(this._getEmptyBook()), "newBook");
+        this.setModel(new JSONModel(this._getEmptyProduct()), "newProduct");
       },
 
       _getEmptyBook() {
@@ -248,6 +259,111 @@ sap.ui.define(
 
       onSaveTitle(oEvent) {
         this._setEditMode(oEvent, false);
+      },
+
+      _getEmptyProduct() {
+        return {
+          ID: "",
+          Name: "",
+          Description: "",
+          ReleaseDate: null,
+          DiscontinuedDate: null,
+          Rating: "",
+          Price: "",
+        };
+      },
+
+      onAddV2() {
+        if (!this._pAddProductDialog) {
+          this._pAddProductDialog = this.loadFragment({
+            name: "tasktwo.view.fragments.AddProductDialog",
+          });
+        }
+        this._pAddProductDialog.then((oDialog) => {
+          this.getModel("newProduct").setData(this._getEmptyProduct());
+          PRODUCT_FIELD_IDS.forEach((sId) => this.byId(sId).setValueState("None"));
+          oDialog.open();
+        });
+      },
+
+      onCancelV2() {
+        this._closeAddProductDialog();
+      },
+
+      _closeAddProductDialog() {
+        this._pAddProductDialog.then((oDialog) => oDialog.close());
+      },
+
+      onProductFieldChange(oEvent) {
+        const oControl = oEvent.getSource();
+        const vValue = oControl.isA("sap.m.DatePicker")
+          ? oControl.getDateValue()
+          : oControl.getValue().trim();
+        oControl.setValueState(vValue ? "None" : "Error");
+      },
+
+      _validateNewProduct() {
+        const oData = this.getModel("newProduct").getData();
+        const mValid = {
+          prodId: String(oData.ID).trim() !== "",
+          prodName: String(oData.Name).trim() !== "",
+          prodDesc: String(oData.Description).trim() !== "",
+          prodRelease: !!oData.ReleaseDate,
+          prodDiscontinued: !!oData.DiscontinuedDate,
+          prodRating: String(oData.Rating).trim() !== "",
+          prodPrice: String(oData.Price).trim() !== "",
+        };
+
+        let bValid = true;
+        PRODUCT_FIELD_IDS.forEach((sId) => {
+          const oControl = this.byId(sId);
+          if (mValid[sId]) {
+            oControl.setValueState("None");
+          } else {
+            oControl.setValueState("Error");
+            bValid = false;
+          }
+        });
+        return bValid;
+      },
+
+      onSaveV2() {
+        if (!this._validateNewProduct()) {
+          return;
+        }
+
+        const oData = this.getModel("newProduct").getData();
+        const oModel = this.getModel("odataV2Model");
+        const oBundle = this.getResourceBundle();
+        const sGroupId = "createProduct";
+
+        if (!oModel.getDeferredGroups().includes(sGroupId)) {
+          oModel.setDeferredGroups(oModel.getDeferredGroups().concat(sGroupId));
+        }
+
+        oModel.create(
+          "/Products",
+          {
+            ID: parseInt(oData.ID, 10),
+            Name: oData.Name.trim(),
+            Description: oData.Description.trim(),
+            ReleaseDate: oData.ReleaseDate,
+            DiscontinuedDate: oData.DiscontinuedDate,
+            Rating: parseInt(oData.Rating, 10),
+            Price: String(oData.Price),
+          },
+          {
+            groupId: sGroupId,
+            success: () => {
+              MessageToast.show(oBundle.getText("createSuccess"));
+              this._closeAddProductDialog();
+            },
+            error: () => {
+              MessageBox.error(oBundle.getText("createError"));
+            },
+          },
+        );
+        oModel.submitChanges({ groupId: sGroupId });
       },
 
       onV2SelectionChange() {
