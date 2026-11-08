@@ -5,9 +5,19 @@ sap.ui.define(
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
+    "sap/m/MessageToast",
+    "sap/m/MessageBox",
     "sap/ui/model/type/Date",
   ],
-  (BaseController, formatter, JSONModel, Filter, FilterOperator) => {
+  (
+    BaseController,
+    formatter,
+    JSONModel,
+    Filter,
+    FilterOperator,
+    MessageToast,
+    MessageBox,
+  ) => {
     "use strict";
 
     const FIELD_IDS = [
@@ -238,6 +248,59 @@ sap.ui.define(
 
       onSaveTitle(oEvent) {
         this._setEditMode(oEvent, false);
+      },
+
+      onV2SelectionChange() {
+        this._updateDeleteV2Button();
+      },
+
+      _updateDeleteV2Button() {
+        const bHasSelection =
+          this.byId("productsV2Table").getSelectedItems().length > 0;
+        this.byId("deleteV2Btn").setEnabled(bHasSelection);
+      },
+
+      onDeleteV2() {
+        const oTable = this.byId("productsV2Table");
+        const oModel = this.getModel("odataV2Model");
+        const oBundle = this.getResourceBundle();
+        const sGroupId = "deleteProducts";
+
+        const aPaths = oTable
+          .getSelectedItems()
+          .map((oItem) => oItem.getBindingContext("odataV2Model").getPath());
+
+        if (!oModel.getDeferredGroups().includes(sGroupId)) {
+          oModel.setDeferredGroups(oModel.getDeferredGroups().concat(sGroupId));
+        }
+
+        const aRequests = aPaths.map(
+          (sPath) =>
+            new Promise((resolve) => {
+              oModel.remove(sPath, {
+                groupId: sGroupId,
+                success: () => resolve(true),
+                error: () => resolve(false),
+              });
+            }),
+        );
+
+        oModel.submitChanges({ groupId: sGroupId });
+
+        Promise.all(aRequests).then((aResults) => {
+          const iDeleted = aResults.filter(Boolean).length;
+          const iFailed = aResults.length - iDeleted;
+
+          if (iDeleted > 0) {
+            MessageToast.show(oBundle.getText("deleteSuccess", [iDeleted]));
+          }
+          if (iFailed > 0) {
+            MessageBox.error(oBundle.getText("deleteError", [iFailed]));
+          }
+
+          oTable.removeSelections(true);
+          this._updateDeleteV2Button();
+        });
       },
 
       _setEditMode(oEvent, bEdit) {

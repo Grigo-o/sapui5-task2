@@ -167,7 +167,19 @@
                     <Table
                         id="productsV2Table"
                         items="{odataV2Model>/Products}"
+                        mode="MultiSelect"
+                        selectionChange=".onV2SelectionChange"
                     >
+                        <headerToolbar>
+                            <Toolbar id="v2Toolbar">
+                                <Button
+                                    id="deleteV2Btn"
+                                    text="{i18n>delete}"
+                                    enabled="false"
+                                    press=".onDeleteV2"
+                                />
+                            </Toolbar>
+                        </headerToolbar>
                         <columns>
                             <Column id="v2ColId">
                                 <Text
