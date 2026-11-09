@@ -1,120 +1,45 @@
 <core:FragmentDefinition
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:form="sap.ui.layout.form"
->
-    <Dialog
-        id="addProductDialog"
-        title="{newProduct>/dialogTitle}"
-    >
-        <form:SimpleForm
-            id="addProductForm"
-            editable="true"
-            layout="ResponsiveGridLayout"
-        >
-            <Label
-                id="lblProdId"
-                text="{i18n>labelId}"
-                required="true"
-                labelFor="prodId"
-            />
-            <Input
-                id="prodId"
-                type="Number"
-                value="{newProduct>/ID}"
-                enabled="{newProduct>/isNew}"
-                valueStateText="{i18n>requiredField}"
-                liveChange=".onProductFieldChange"
-            />
-            <Label
-                id="lblProdName"
-                text="{i18n>labelName}"
-                required="true"
-                labelFor="prodName"
-            />
-            <Input
-                id="prodName"
-                value="{newProduct>/Name}"
-                valueStateText="{i18n>requiredField}"
-                liveChange=".onProductFieldChange"
-            />
-            <Label
-                id="lblProdDesc"
-                text="{i18n>labelDescription}"
-                required="true"
-                labelFor="prodDesc"
-            />
-            <Input
-                id="prodDesc"
-                value="{newProduct>/Description}"
-                valueStateText="{i18n>requiredField}"
-                liveChange=".onProductFieldChange"
-            />
-            <Label
-                id="lblProdRelease"
-                text="{i18n>labelDate}"
-                required="true"
-                labelFor="prodRelease"
-            />
-            <DatePicker
-                id="prodRelease"
-                dateValue="{newProduct>/ReleaseDate}"
-                valueStateText="{i18n>requiredField}"
-                change=".onProductFieldChange"
-            />
-            <Label
-                id="lblProdDiscontinued"
-                text="{i18n>labelDiscontinuedDate}"
-                required="true"
-                labelFor="prodDiscontinued"
-            />
-            <DatePicker
-                id="prodDiscontinued"
-                dateValue="{newProduct>/DiscontinuedDate}"
-                valueStateText="{i18n>requiredField}"
-                change=".onProductFieldChange"
-            />
-            <Label
-                id="lblProdRating"
-                text="{i18n>labelRating}"
-                required="true"
-                labelFor="prodRating"
-            />
-            <Input
-                id="prodRating"
-                type="Number"
-                value="{newProduct>/Rating}"
-                valueStateText="{i18n>requiredField}"
-                liveChange=".onProductFieldChange"
-            />
-            <Label
-                id="lblProdPrice"
-                text="{i18n>labelPrice}"
-                required="true"
-                labelFor="prodPrice"
-            />
-            <Input
-                id="prodPrice"
-                type="Number"
-                value="{newProduct>/Price}"
-                valueStateText="{i18n>requiredField}"
-                liveChange=".onProductFieldChange"
-            />
+    xmlns:form="sap.ui.layout.form">
+    <Dialog id="addProductDialog" afterClose=".onAfterCloseProductDialog">
+        <form:SimpleForm id="addProductForm" editable="true" layout="ResponsiveGridLayout">
+            <Label id="lblProdId" text="{i18n>labelId}" required="true" labelFor="prodId"/>
+            <Input id="prodId" type="Number"
+                value="{path: 'odataV2Model>ID', type: 'sap.ui.model.odata.type.Int32'}"
+                valueStateText="{i18n>requiredField}" liveChange=".onProductFieldChange"/>
+
+            <Label id="lblProdName" text="{i18n>labelName}" required="true" labelFor="prodName"/>
+            <Input id="prodName" value="{odataV2Model>Name}"
+                valueStateText="{i18n>requiredField}" liveChange=".onProductFieldChange"/>
+
+            <Label id="lblProdDesc" text="{i18n>labelDescription}" required="true" labelFor="prodDesc"/>
+            <Input id="prodDesc" value="{odataV2Model>Description}"
+                valueStateText="{i18n>requiredField}" liveChange=".onProductFieldChange"/>
+
+            <Label id="lblProdRelease" text="{i18n>labelDate}" required="true" labelFor="prodRelease"/>
+            <DatePicker id="prodRelease" dateValue="{odataV2Model>ReleaseDate}"
+                valueStateText="{i18n>requiredField}" change=".onProductFieldChange"/>
+
+            <Label id="lblProdDiscontinued" text="{i18n>labelDiscontinuedDate}" required="true" labelFor="prodDiscontinued"/>
+            <DatePicker id="prodDiscontinued" dateValue="{odataV2Model>DiscontinuedDate}"
+                valueStateText="{i18n>requiredField}" change=".onProductFieldChange"/>
+
+            <Label id="lblProdRating" text="{i18n>labelRating}" required="true" labelFor="prodRating"/>
+            <Input id="prodRating" type="Number"
+                value="{path: 'odataV2Model>Rating', type: 'sap.ui.model.odata.type.Int32'}"
+                valueStateText="{i18n>requiredField}" liveChange=".onProductFieldChange"/>
+
+            <Label id="lblProdPrice" text="{i18n>labelPrice}" required="true" labelFor="prodPrice"/>
+            <Input id="prodPrice" type="Number"
+                value="{path: 'odataV2Model>Price', type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 'variable'}}"
+                valueStateText="{i18n>requiredField}" liveChange=".onProductFieldChange"/>
         </form:SimpleForm>
         <beginButton>
-            <Button
-                id="saveProductBtn"
-                text="{i18n>save}"
-                type="Emphasized"
-                press=".onSaveV2"
-            />
+            <Button id="saveProductBtn" text="{i18n>save}" type="Emphasized" press=".onSaveV2"/>
         </beginButton>
         <endButton>
-            <Button
-                id="cancelProductBtn"
-                text="{i18n>cancel}"
-                press=".onCancelV2"
-            />
+            <Button id="cancelProductBtn" text="{i18n>cancel}" press=".onCancelV2"/>
         </endButton>
     </Dialog>
 </core:FragmentDefinition>
