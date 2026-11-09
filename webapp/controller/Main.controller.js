@@ -262,44 +262,42 @@ sap.ui.define(
 
       onDeleteV2() {
         const oTable = this.byId("productsV2Table");
-        const oModel = this.getModel("odataV2Model");
         const oBundle = this.getResourceBundle();
-        const sGroupId = "deleteProducts";
 
         const aPaths = oTable
           .getSelectedItems()
           .map((oItem) => oItem.getBindingContext("odataV2Model").getPath());
 
-        if (!oModel.getDeferredGroups().includes(sGroupId)) {
-          oModel.setDeferredGroups(oModel.getDeferredGroups().concat(sGroupId));
-        }
-
-        const aRequests = aPaths.map(
-          (sPath) =>
-            new Promise((resolve) => {
-              oModel.remove(sPath, {
-                groupId: sGroupId,
-                success: () => resolve(true),
-                error: () => resolve(false),
-              });
-            }),
+        MessageBox.confirm(
+          oBundle.getText("deleteProductsConfirm", [aPaths.length]),
+          {
+            title: oBundle.getText("confirmTitle"),
+            actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+            emphasizedAction: MessageBox.Action.DELETE,
+            onClose: (sAction) => {
+              if (sAction === MessageBox.Action.DELETE) {
+                this._deleteProducts(aPaths);
+              }
+            },
+          },
         );
+      },
 
-        oModel.submitChanges({ groupId: sGroupId });
+      _deleteProducts(aPaths) {
+        const oTable = this.byId("productsV2Table");
+        const oModel = this.getModel("odataV2Model");
+        const oBundle = this.getResourceBundle();
 
-        Promise.all(aRequests).then((aResults) => {
-          const iDeleted = aResults.filter(Boolean).length;
-          const iFailed = aResults.length - iDeleted;
+        aPaths.forEach((sPath) => oModel.remove(sPath, { groupId: "changes" }));
 
-          if (iDeleted > 0) {
-            MessageToast.show(oBundle.getText("deleteSuccess", [iDeleted]));
-          }
-          if (iFailed > 0) {
-            MessageBox.error(oBundle.getText("deleteError", [iFailed]));
-          }
-
-          oTable.removeSelections(true);
-          this._updateDeleteV2Button();
+        oModel.submitChanges({
+          groupId: "changes",
+          success: () => {
+            MessageToast.show(oBundle.getText("deleteSuccess", [aPaths.length]));
+            oTable.removeSelections(true);
+            this._updateDeleteV2Button();
+          },
+          error: () => MessageBox.error(oBundle.getText("deleteError")),
         });
       },
 
