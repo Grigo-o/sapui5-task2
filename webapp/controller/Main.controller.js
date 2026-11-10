@@ -97,7 +97,6 @@ sap.ui.define(
           new JSONModel({ books: aBooks, genres: this._buildGenres(aBooks) }),
         );
         this.setModel(new JSONModel(this._getEmptyBook()), "newBook");
-        this.setModel(new JSONModel(this._getEmptyProduct()), "newProduct");
       },
 
       _getEmptyBook() {
@@ -263,57 +262,46 @@ sap.ui.define(
         this._setEditMode(oEvent, false);
       },
 
-      _getEmptyProduct() {
-        return {
-          ID: "",
-          Name: "",
-          Description: "",
-          ReleaseDate: null,
-          DiscontinuedDate: null,
-          Rating: "",
-          Price: "",
-        };
-      },
-
       onAddV2() {
-        this._sEditPath = null;
-        this._openProductDialog({
-          ...this._getEmptyProduct(),
-          isNew: true,
-          dialogTitle: this.getResourceBundle().getText("addProductTitle"),
-        });
+        this._openProductDialog(true);
       },
 
       onEditV2(oEvent) {
-        const oContext = oEvent.getSource().getBindingContext("odataV2Model");
-        const oProduct = oContext.getObject();
-
-        this._sEditPath = oContext.getPath();
-        this._openProductDialog({
-          ID: oProduct.ID,
-          Name: oProduct.Name,
-          Description: oProduct.Description,
-          ReleaseDate: oProduct.ReleaseDate
-            ? new Date(oProduct.ReleaseDate)
-            : null,
-          DiscontinuedDate: oProduct.DiscontinuedDate
-            ? new Date(oProduct.DiscontinuedDate)
-            : null,
-          Rating: oProduct.Rating,
-          Price: oProduct.Price,
-          isNew: false,
-          dialogTitle: this.getResourceBundle().getText("editProductTitle"),
-        });
+        this._openProductDialog(
+          false,
+          oEvent.getSource().getBindingContext("odataV2Model"),
+        );
       },
 
-      _openProductDialog(oData) {
+      _openProductDialog(bIsCreate, oEditContext) {
+        const oModel = this.getModel("odataV2Model");
+        const oBundle = this.getResourceBundle();
+
+        const oContext = bIsCreate
+          ? oModel.createEntry("/Products", {
+              properties: {
+                ID: null,
+                Name: "",
+                Description: "",
+                ReleaseDate: null,
+                DiscontinuedDate: null,
+                Rating: null,
+                Price: null,
+              },
+            })
+          : oEditContext;
+
         if (!this._pAddProductDialog) {
           this._pAddProductDialog = this.loadFragment({
             name: "tasktwo.view.fragments.AddProductDialog",
           });
         }
         this._pAddProductDialog.then((oDialog) => {
-          this.getModel("newProduct").setData(oData);
+          oDialog.setBindingContext(oContext, "odataV2Model");
+          oDialog.setTitle(
+            oBundle.getText(bIsCreate ? "addProductTitle" : "editProductTitle"),
+          );
+          this.byId("prodId").setEnabled(bIsCreate);
           PRODUCT_FIELD_IDS.forEach((sId) =>
             this.byId(sId).setValueState("None"),
           );
@@ -329,88 +317,76 @@ sap.ui.define(
         this._pAddProductDialog.then((oDialog) => oDialog.close());
       },
 
-      onProductFieldChange(oEvent) {
-        const oControl = oEvent.getSource();
-        const vValue = oControl.isA("sap.m.DatePicker")
-          ? oControl.getDateValue()
-          : oControl.getValue().trim();
-        oControl.setValueState(vValue ? "None" : "Error");
+      onAfterCloseProductDialog(oEvent) {
+        const oModel = this.getModel("odataV2Model");
+        const oContext = oEvent.getSource().getBindingContext("odataV2Model");
+
+        if (!oContext || !oModel.hasPendingChanges()) {
+          return;
+        }
+        if (oContext.isTransient()) {
+          oModel.deleteCreatedEntry(oContext);
+        } else {
+          oModel.resetChanges([oContext.getPath()]);
+        }
       },
 
-      _validateNewProduct() {
-        const oData = this.getModel("newProduct").getData();
-        const mValid = {
-          prodId: String(oData.ID).trim() !== "",
-          prodName: String(oData.Name).trim() !== "",
-          prodDesc: String(oData.Description).trim() !== "",
-          prodRelease: !!oData.ReleaseDate,
-          prodDiscontinued: !!oData.DiscontinuedDate,
-          prodRating: String(oData.Rating).trim() !== "",
-          prodPrice: String(oData.Price).trim() !== "",
-        };
+      onProductFieldChange(oEvent) {
+        this._validateControl(oEvent.getSource());
+      },
 
-        let bValid = true;
-        PRODUCT_FIELD_IDS.forEach((sId) => {
-          const oControl = this.byId(sId);
-          if (mValid[sId]) {
-            oControl.setValueState("None");
-          } else {
-            oControl.setValueState("Error");
-            bValid = false;
-          }
-        });
+      _validateControl(oControl) {
+        let bValid = false;
+
+        if (oControl.isA("sap.m.DatePicker")) {
+          bValid = oControl.isValidValue() && oControl.getValue().length > 0;
+        } else if (oControl.isA("sap.m.Input")) {
+          const sValue = oControl.getValue().trim();
+          bValid =
+            oControl.getType() === "Number"
+              ? Number(sValue) > 0
+              : sValue.length > 0;
+        }
+
+        oControl.setValueState(bValid ? "None" : "Error");
         return bValid;
       },
 
+      _validateProductForm() {
+        return PRODUCT_FIELD_IDS.map((sId) =>
+          this._validateControl(this.byId(sId)),
+        ).every(Boolean);
+      },
+
       onSaveV2() {
-        if (!this._validateNewProduct()) {
+        if (!this._validateProductForm()) {
           return;
         }
 
-        const oData = this.getModel("newProduct").getData();
         const oModel = this.getModel("odataV2Model");
         const oBundle = this.getResourceBundle();
-        const bEdit = !!this._sEditPath;
-        const sGroupId = "saveProduct";
+        const oContext = this.byId("addProductDialog").getBindingContext(
+          "odataV2Model",
+        );
+        const bCreate = !!oContext.isTransient();
 
-        if (!oModel.getDeferredGroups().includes(sGroupId)) {
-          oModel.setDeferredGroups(oModel.getDeferredGroups().concat(sGroupId));
+        if (!oModel.hasPendingChanges()) {
+          this._closeAddProductDialog();
+          return;
         }
 
-        const oPayload = {
-          Name: oData.Name.trim(),
-          Description: oData.Description.trim(),
-          ReleaseDate: oData.ReleaseDate,
-          DiscontinuedDate: oData.DiscontinuedDate,
-          Rating: parseInt(oData.Rating, 10),
-          Price: String(oData.Price),
-        };
-
-        const mParameters = {
-          groupId: sGroupId,
+        oModel.submitChanges({
           success: () => {
             MessageToast.show(
-              oBundle.getText(bEdit ? "updateSuccess" : "createSuccess"),
+              oBundle.getText(bCreate ? "createSuccess" : "updateSuccess"),
             );
             this._closeAddProductDialog();
           },
-          error: () => {
+          error: () =>
             MessageBox.error(
-              oBundle.getText(bEdit ? "updateError" : "createError"),
-            );
-          },
-        };
-
-        if (bEdit) {
-          oModel.update(this._sEditPath, oPayload, mParameters);
-        } else {
-          oModel.create(
-            "/Products",
-            { ID: parseInt(oData.ID, 10), ...oPayload },
-            mParameters,
-          );
-        }
-        oModel.submitChanges({ groupId: sGroupId });
+              oBundle.getText(bCreate ? "createError" : "updateError"),
+            ),
+        });
       },
 
       onV2SelectionChange() {
@@ -425,44 +401,44 @@ sap.ui.define(
 
       onDeleteV2() {
         const oTable = this.byId("productsV2Table");
-        const oModel = this.getModel("odataV2Model");
         const oBundle = this.getResourceBundle();
-        const sGroupId = "deleteProducts";
 
         const aPaths = oTable
           .getSelectedItems()
           .map((oItem) => oItem.getBindingContext("odataV2Model").getPath());
 
-        if (!oModel.getDeferredGroups().includes(sGroupId)) {
-          oModel.setDeferredGroups(oModel.getDeferredGroups().concat(sGroupId));
-        }
-
-        const aRequests = aPaths.map(
-          (sPath) =>
-            new Promise((resolve) => {
-              oModel.remove(sPath, {
-                groupId: sGroupId,
-                success: () => resolve(true),
-                error: () => resolve(false),
-              });
-            }),
+        MessageBox.confirm(
+          oBundle.getText("deleteProductsConfirm", [aPaths.length]),
+          {
+            title: oBundle.getText("confirmTitle"),
+            actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+            emphasizedAction: MessageBox.Action.DELETE,
+            onClose: (sAction) => {
+              if (sAction === MessageBox.Action.DELETE) {
+                this._deleteProducts(aPaths);
+              }
+            },
+          },
         );
+      },
 
-        oModel.submitChanges({ groupId: sGroupId });
+      _deleteProducts(aPaths) {
+        const oTable = this.byId("productsV2Table");
+        const oModel = this.getModel("odataV2Model");
+        const oBundle = this.getResourceBundle();
 
-        Promise.all(aRequests).then((aResults) => {
-          const iDeleted = aResults.filter(Boolean).length;
-          const iFailed = aResults.length - iDeleted;
+        aPaths.forEach((sPath) => oModel.remove(sPath, { groupId: "changes" }));
 
-          if (iDeleted > 0) {
-            MessageToast.show(oBundle.getText("deleteSuccess", [iDeleted]));
-          }
-          if (iFailed > 0) {
-            MessageBox.error(oBundle.getText("deleteError", [iFailed]));
-          }
-
-          oTable.removeSelections(true);
-          this._updateDeleteV2Button();
+        oModel.submitChanges({
+          groupId: "changes",
+          success: () => {
+            MessageToast.show(
+              oBundle.getText("deleteSuccess", [aPaths.length]),
+            );
+            oTable.removeSelections(true);
+            this._updateDeleteV2Button();
+          },
+          error: () => MessageBox.error(oBundle.getText("deleteError")),
         });
       },
 
