@@ -12,5 +12,8 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => {
     getResourceBundle() {
       return this.getOwnerComponent().getModel("i18n").getResourceBundle();
     },
+    getRouter() {
+      return this.getOwnerComponent().getRouter();
+    },
   });
 });

@@ -97,6 +97,35 @@ sap.ui.define(
           new JSONModel({ books: aBooks, genres: this._buildGenres(aBooks) }),
         );
         this.setModel(new JSONModel(this._getEmptyBook()), "newBook");
+        const oRouter = this.getRouter();
+        oRouter
+          .getRoute("RouteMain")
+          .attachPatternMatched(this._onRouteMain, this);
+        oRouter
+          .getRoute("RouteTab")
+          .attachPatternMatched(this._onRouteTab, this);
+      },
+
+      onTabSelect(oEvent) {
+        this.getRouter().navTo("RouteTab", {
+          tabKey: oEvent.getParameter("key"),
+        });
+      },
+
+      _onRouteMain() {
+        this.getRouter().navTo("RouteTab", { tabKey: "json" }, true);
+      },
+
+      _onRouteTab(oEvent) {
+        const sTabKey = oEvent.getParameter("arguments").tabKey;
+        const oTabBar = this.byId("iconTabBar");
+        const aKeys = oTabBar.getItems().map((oItem) => oItem.getKey());
+
+        if (!aKeys.includes(sTabKey)) {
+          this.getRouter().navTo("RouteTab", { tabKey: "json" }, true);
+          return;
+        }
+        oTabBar.setSelectedKey(sTabKey);
       },
 
       _getEmptyBook() {
@@ -365,9 +394,8 @@ sap.ui.define(
 
         const oModel = this.getModel("odataV2Model");
         const oBundle = this.getResourceBundle();
-        const oContext = this.byId("addProductDialog").getBindingContext(
-          "odataV2Model",
-        );
+        const oContext =
+          this.byId("addProductDialog").getBindingContext("odataV2Model");
         const bCreate = !!oContext.isTransient();
 
         if (!oModel.hasPendingChanges()) {

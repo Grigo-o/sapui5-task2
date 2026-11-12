@@ -11,6 +11,8 @@
         <IconTabBar
             id="iconTabBar"
             class="sapUiResponsiveContentPadding"
+            selectedKey="json"
+            select=".onTabSelect"
         >
             <items>
                 <IconTabFilter
