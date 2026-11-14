@@ -121,6 +121,15 @@ sap.ui.define(
         oTabBar.setSelectedKey(sTabKey);
       },
 
+      onProductPress(oEvent) {
+        const sProductId = oEvent
+          .getSource()
+          .getBindingContext("odataV2Model")
+          .getProperty("ID");
+
+        this.getRouter().navTo("RouteProduct", { productId: sProductId });
+      },
+
       _getEmptyBook() {
         return {
           ID: "",
