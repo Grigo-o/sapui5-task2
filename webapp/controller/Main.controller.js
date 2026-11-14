@@ -99,9 +99,6 @@ sap.ui.define(
         this.setModel(new JSONModel(this._getEmptyBook()), "newBook");
         const oRouter = this.getRouter();
         oRouter
-          .getRoute("RouteMain")
-          .attachPatternMatched(this._onRouteMain, this);
-        oRouter
           .getRoute("RouteTab")
           .attachPatternMatched(this._onRouteTab, this);
       },
@@ -110,10 +107,6 @@ sap.ui.define(
         this.getRouter().navTo("RouteTab", {
           tabKey: oEvent.getParameter("key"),
         });
-      },
-
-      _onRouteMain() {
-        this.getRouter().navTo("RouteTab", { tabKey: "json" }, true);
       },
 
       _onRouteTab(oEvent) {
