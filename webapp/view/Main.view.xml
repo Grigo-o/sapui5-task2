@@ -286,7 +286,11 @@
                             </Column>
                         </columns>
                         <items>
-                            <ColumnListItem id="v2Item">
+                            <ColumnListItem
+                                id="v2Item"
+                                type="Navigation"
+                                press=".onProductPress"
+                            >
                                 <Text
                                     id="v2TxtId"
                                     text="{odataV2Model>ID}"
