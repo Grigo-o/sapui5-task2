@@ -1,0 +1,11 @@
+<mvc:View
+    controllerName="tasktwo.controller.Product"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page
+        id="productPage"
+        title="{i18n>productTitle}"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+    />
+</mvc:View>
