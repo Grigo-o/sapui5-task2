@@ -6,7 +6,8 @@
     "ReleaseDate": "1992-01-01T00:00:00.000Z",
     "DiscontinuedDate": null,
     "Rating": 4,
-    "Price": 2.5
+    "Price": 2.5,
+    "SupplierID": 1
   },
   {
     "ID": 2,
@@ -15,7 +16,8 @@
     "ReleaseDate": "1995-10-01T00:00:00.000Z",
     "DiscontinuedDate": null,
     "Rating": 3,
-    "Price": 3.5
+    "Price": 3.5,
+    "SupplierID": 1
   },
   {
     "ID": 3,
@@ -24,7 +26,8 @@
     "ReleaseDate": "2000-10-01T00:00:00.000Z",
     "DiscontinuedDate": "2010-12-31T00:00:00.000Z",
     "Rating": 3,
-    "Price": 1.9
+    "Price": 1.9,
+    "SupplierID": 2
   },
   {
     "ID": 4,
@@ -33,7 +36,8 @@
     "ReleaseDate": "2010-06-15T00:00:00.000Z",
     "DiscontinuedDate": null,
     "Rating": 5,
-    "Price": 12.99
+    "Price": 12.99,
+    "SupplierID": 2
   },
   {
     "ID": 5,
@@ -42,6 +46,7 @@
     "ReleaseDate": "1985-03-20T00:00:00.000Z",
     "DiscontinuedDate": "2005-12-31T00:00:00.000Z",
     "Rating": 2,
-    "Price": 8.75
+    "Price": 8.75,
+    "SupplierID": 3
   }
 ]

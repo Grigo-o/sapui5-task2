@@ -1,0 +1,47 @@
+[
+  {
+    "ID": 1,
+    "Name": "Tokyo Traders",
+    "Address": {
+      "Street": "9-8 Sekimai Musashino-shi",
+      "City": "Tokyo",
+      "State": "Tokyo",
+      "ZipCode": "100",
+      "Country": "Japan"
+    },
+    "Concurrency": 1,
+    "Products": [
+      { "__metadata": { "uri": "Products(1)" } },
+      { "__metadata": { "uri": "Products(2)" } }
+    ]
+  },
+  {
+    "ID": 2,
+    "Name": "Exotic Liquids",
+    "Address": {
+      "Street": "49 Gilbert St.",
+      "City": "London",
+      "State": "London",
+      "ZipCode": "EC1 4SD",
+      "Country": "UK"
+    },
+    "Concurrency": 1,
+    "Products": [
+      { "__metadata": { "uri": "Products(3)" } },
+      { "__metadata": { "uri": "Products(4)" } }
+    ]
+  },
+  {
+    "ID": 3,
+    "Name": "Norske Meierier",
+    "Address": {
+      "Street": "Kaiplassen 5",
+      "City": "Bergen",
+      "State": "Hordaland",
+      "ZipCode": "5003",
+      "Country": "Norway"
+    },
+    "Concurrency": 1,
+    "Products": [{ "__metadata": { "uri": "Products(5)" } }]
+  }
+]

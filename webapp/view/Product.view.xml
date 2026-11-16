@@ -1,11 +1,91 @@
 <mvc:View
     controllerName="tasktwo.controller.Product"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:uxap="sap.uxap"
+    xmlns:form="sap.ui.layout.form">
     <Page
         id="productPage"
         title="{i18n>productTitle}"
         showNavButton="true"
         navButtonPress=".onNavBack"
-    />
+        enableScrolling="false">
+        <uxap:ObjectPageLayout id="productObjectPage" upperCaseAnchorBar="false">
+            <uxap:headerTitle>
+                <uxap:ObjectPageDynamicHeaderTitle id="productHeaderTitle">
+                    <uxap:expandedHeading>
+                        <Title id="productTitleExpanded" text="{odataV2Model>Name}" wrapping="true"/>
+                    </uxap:expandedHeading>
+                    <uxap:snappedHeading>
+                        <Title id="productTitleSnapped" text="{odataV2Model>Name}"/>
+                    </uxap:snappedHeading>
+                </uxap:ObjectPageDynamicHeaderTitle>
+            </uxap:headerTitle>
+
+            <uxap:sections>
+                <uxap:ObjectPageSection id="infoSection" title="{i18n>productInfoSection}">
+                    <uxap:subSections>
+                        <uxap:ObjectPageSubSection id="infoSubSection">
+                            <uxap:blocks>
+                                <form:SimpleForm
+                                    id="productForm"
+                                    editable="false"
+                                    layout="ColumnLayout"
+                                    columnsM="2"
+                                    columnsL="2"
+                                    columnsXL="2">
+                                    <Label id="lblInfoId" text="{i18n>labelId}"/>
+                                    <Text id="txtInfoId" text="{odataV2Model>ID}"/>
+                                    <Label id="lblInfoName" text="{i18n>labelName}"/>
+                                    <Text id="txtInfoName" text="{odataV2Model>Name}"/>
+                                    <Label id="lblInfoDesc" text="{i18n>labelDescription}"/>
+                                    <Text id="txtInfoDesc" text="{odataV2Model>Description}"/>
+                                    <Label id="lblInfoRelease" text="{i18n>labelDate}"/>
+                                    <Text id="txtInfoRelease" text="{path: 'odataV2Model>ReleaseDate', type: 'sap.ui.model.type.Date', formatOptions: {style: 'medium'}}"/>
+                                    <Label id="lblInfoDiscontinued" text="{i18n>labelDiscontinuedDate}"/>
+                                    <Text id="txtInfoDiscontinued" text="{path: 'odataV2Model>DiscontinuedDate', type: 'sap.ui.model.type.Date', formatOptions: {style: 'medium'}}"/>
+                                    <Label id="lblInfoRating" text="{i18n>labelRating}"/>
+                                    <Text id="txtInfoRating" text="{odataV2Model>Rating}"/>
+                                    <Label id="lblInfoPrice" text="{i18n>labelPrice}"/>
+                                    <Text id="txtInfoPrice" text="{odataV2Model>Price}"/>
+                                </form:SimpleForm>
+                            </uxap:blocks>
+                        </uxap:ObjectPageSubSection>
+                    </uxap:subSections>
+                </uxap:ObjectPageSection>
+
+                <uxap:ObjectPageSection id="supplierSection" title="{i18n>supplierSection}">
+                    <uxap:subSections>
+                        <uxap:ObjectPageSubSection id="supplierSubSection">
+                            <uxap:blocks>
+                                <form:SimpleForm
+                                    id="supplierForm"
+                                    binding="{odataV2Model>Supplier}"
+                                    editable="false"
+                                    layout="ColumnLayout"
+                                    columnsM="2"
+                                    columnsL="2"
+                                    columnsXL="2">
+                                    <Label id="lblSupId" text="{i18n>labelId}"/>
+                                    <Text id="txtSupId" text="{odataV2Model>ID}"/>
+                                    <Label id="lblSupName" text="{i18n>labelName}"/>
+                                    <Text id="txtSupName" text="{odataV2Model>Name}"/>
+                                    <Label id="lblSupStreet" text="{i18n>labelStreet}"/>
+                                    <Text id="txtSupStreet" text="{odataV2Model>Address/Street}"/>
+                                    <Label id="lblSupCity" text="{i18n>labelCity}"/>
+                                    <Text id="txtSupCity" text="{odataV2Model>Address/City}"/>
+                                    <Label id="lblSupState" text="{i18n>labelState}"/>
+                                    <Text id="txtSupState" text="{odataV2Model>Address/State}"/>
+                                    <Label id="lblSupZip" text="{i18n>labelZipCode}"/>
+                                    <Text id="txtSupZip" text="{odataV2Model>Address/ZipCode}"/>
+                                    <Label id="lblSupCountry" text="{i18n>labelCountry}"/>
+                                    <Text id="txtSupCountry" text="{odataV2Model>Address/Country}"/>
+                                </form:SimpleForm>
+                            </uxap:blocks>
+                        </uxap:ObjectPageSubSection>
+                    </uxap:subSections>
+                </uxap:ObjectPageSection>
+            </uxap:sections>
+        </uxap:ObjectPageLayout>
+    </Page>
 </mvc:View>
