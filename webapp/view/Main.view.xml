@@ -336,7 +336,19 @@
                     <Table
                         id="productsV4Table"
                         items="{odataV4Model>/Products}"
+                        mode="MultiSelect"
+                        selectionChange=".onV4SelectionChange"
                     >
+                        <headerToolbar>
+                            <Toolbar id="v4Toolbar">
+                                <Button
+                                    id="deleteV4Btn"
+                                    text="{i18n>delete}"
+                                    enabled="false"
+                                    press=".onDeleteV4"
+                                />
+                            </Toolbar>
+                        </headerToolbar>
                         <columns>
                             <Column id="v4ColId">
                                 <Text
