@@ -397,6 +397,12 @@
                                     text="{i18n>labelPrice}"
                                 />
                             </Column>
+                            <Column id="v4ColActions">
+                                <Text
+                                    id="v4HdrActions"
+                                    text="{i18n>actions}"
+                                />
+                            </Column>
                         </columns>
                         <items>
                             <ColumnListItem id="v4Item">
@@ -427,6 +433,11 @@
                                 <Text
                                     id="v4TxtPrice"
                                     text="{odataV4Model>Price}"
+                                />
+                                <Button
+                                    id="v4EditBtn"
+                                    text="{i18n>edit}"
+                                    press=".onEditV4"
                                 />
                             </ColumnListItem>
                         </items>

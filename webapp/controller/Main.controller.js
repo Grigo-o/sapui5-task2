@@ -584,6 +584,18 @@ sap.ui.define(
           },
           true,
         );
+        this._openV4Dialog(oContext, true);
+      },
+
+      onEditV4(oEvent) {
+        this._openV4Dialog(
+          oEvent.getSource().getBindingContext("odataV4Model"),
+          false,
+        );
+      },
+
+      _openV4Dialog(oContext, bIsCreate) {
+        const oBundle = this.getResourceBundle();
 
         if (!this._pAddV4Dialog) {
           this._pAddV4Dialog = this.loadFragment({
@@ -592,6 +604,10 @@ sap.ui.define(
         }
         this._pAddV4Dialog.then((oDialog) => {
           oDialog.setBindingContext(oContext, "odataV4Model");
+          oDialog.setTitle(
+            oBundle.getText(bIsCreate ? "addProductTitle" : "editProductTitle"),
+          );
+          this.byId("v4ProdId").setEnabled(bIsCreate);
           PRODUCT_V4_FIELD_IDS.forEach((sId) =>
             this.byId(sId).setValueState("None"),
           );
@@ -619,6 +635,11 @@ sap.ui.define(
         const oDialog = this.byId("addProductV4Dialog");
         const oContext = oDialog.getBindingContext("odataV4Model");
 
+        if (!oContext.isTransient()) {
+          this._updateV4Product();
+          return;
+        }
+
         Promise.all([oContext.created(), oModel.submitBatch("changes")])
           .then(() => {
             MessageToast.show(oBundle.getText("createSuccess"));
@@ -627,6 +648,43 @@ sap.ui.define(
           .catch(() => {
             MessageBox.error(oBundle.getText("createError"));
           });
+      },
+
+      _updateV4Product() {
+        const oModel = this.getModel("odataV4Model");
+        const oBundle = this.getResourceBundle();
+        const oDialog = this.byId("addProductV4Dialog");
+
+        if (!oModel.hasPendingChanges("changes")) {
+          oDialog.close();
+          return;
+        }
+
+        this.byId("productsV4Table")
+          .getBinding("items")
+          .attachEventOnce("patchCompleted", (oEvent) => {
+            if (oEvent.getParameter("success")) {
+              MessageToast.show(oBundle.getText("updateSuccess"));
+              oDialog.close();
+            } else {
+              MessageBox.error(oBundle.getText("updateError"));
+            }
+          });
+        oModel.submitBatch("changes");
+      },
+
+      onAfterCloseV4Dialog(oEvent) {
+        const oModel = this.getModel("odataV4Model");
+        const oContext = oEvent.getSource().getBindingContext("odataV4Model");
+
+        if (!oContext) {
+          return;
+        }
+        if (oContext.isTransient()) {
+          oContext.delete();
+        } else {
+          oModel.resetChanges("changes");
+        }
       },
 
       onCancelV4() {
