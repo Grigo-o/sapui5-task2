@@ -335,7 +335,7 @@
                 >
                     <Table
                         id="productsV4Table"
-                        items="{odataV4Model>/Products}"
+                        items="{path: 'odataV4Model>/Products', parameters: {$$updateGroupId: 'updateGroup'}}"
                         mode="MultiSelect"
                         selectionChange=".onV4SelectionChange"
                     >

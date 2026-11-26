@@ -522,9 +522,7 @@ sap.ui.define(
 
       onDeleteV4() {
         const oBundle = this.getResourceBundle();
-        const aContexts = this.byId("productsV4Table")
-          .getSelectedItems()
-          .map((oItem) => oItem.getBindingContext("odataV4Model"));
+        const aContexts = this.byId("productsV4Table").getSelectedContexts();
 
         MessageBox.confirm(
           oBundle.getText("deleteProductsConfirm", [aContexts.length]),
@@ -543,9 +541,13 @@ sap.ui.define(
 
       _deleteV4Products(aContexts) {
         const oTable = this.byId("productsV4Table");
+        const oModel = this.getModel("odataV4Model");
         const oBundle = this.getResourceBundle();
 
-        Promise.all(aContexts.map((oContext) => oContext.delete()))
+        Promise.all([
+          ...aContexts.map((oContext) => oContext.delete()),
+          oModel.submitBatch("updateGroup"),
+        ])
           .then(() => {
             MessageToast.show(
               oBundle.getText("deleteSuccess", [aContexts.length]),
