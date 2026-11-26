@@ -509,6 +509,58 @@ sap.ui.define(
         const oContext = oEvent.getSource().getBindingContext();
         this.getModel().setProperty(`${oContext.getPath()}/editMode`, bEdit);
       },
+
+      onV4SelectionChange() {
+        this._updateDeleteV4Button();
+      },
+
+      _updateDeleteV4Button() {
+        const bHasSelection =
+          this.byId("productsV4Table").getSelectedItems().length > 0;
+        this.byId("deleteV4Btn").setEnabled(bHasSelection);
+      },
+
+      onDeleteV4() {
+        const oBundle = this.getResourceBundle();
+        const aContexts = this.byId("productsV4Table").getSelectedContexts();
+
+        MessageBox.confirm(
+          oBundle.getText("deleteProductsConfirm", [aContexts.length]),
+          {
+            title: oBundle.getText("confirmTitle"),
+            actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+            emphasizedAction: MessageBox.Action.DELETE,
+            onClose: (sAction) => {
+              if (sAction === MessageBox.Action.DELETE) {
+                this._deleteV4Products(aContexts);
+              }
+            },
+          },
+        );
+      },
+
+      _deleteV4Products(aContexts) {
+        const oTable = this.byId("productsV4Table");
+        const oModel = this.getModel("odataV4Model");
+        const oBundle = this.getResourceBundle();
+
+        Promise.all([
+          ...aContexts.map((oContext) => oContext.delete()),
+          oModel.submitBatch("updateGroup"),
+        ])
+          .then(() => {
+            MessageToast.show(
+              oBundle.getText("deleteSuccess", [aContexts.length]),
+            );
+          })
+          .catch(() => {
+            MessageBox.error(oBundle.getText("deleteError"));
+          })
+          .finally(() => {
+            oTable.removeSelections(true);
+            this._updateDeleteV4Button();
+          });
+      },
     });
   },
 );
