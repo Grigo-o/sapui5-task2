@@ -532,9 +532,7 @@ sap.ui.define(
 
       onDeleteV4() {
         const oBundle = this.getResourceBundle();
-        const aContexts = this.byId("productsV4Table")
-          .getSelectedItems()
-          .map((oItem) => oItem.getBindingContext("odataV4Model"));
+        const aContexts = this.byId("productsV4Table").getSelectedContexts();
 
         MessageBox.confirm(
           oBundle.getText("deleteProductsConfirm", [aContexts.length]),
@@ -553,9 +551,13 @@ sap.ui.define(
 
       _deleteV4Products(aContexts) {
         const oTable = this.byId("productsV4Table");
+        const oModel = this.getModel("odataV4Model");
         const oBundle = this.getResourceBundle();
 
-        Promise.all(aContexts.map((oContext) => oContext.delete("$auto")))
+        Promise.all([
+          ...aContexts.map((oContext) => oContext.delete()),
+          oModel.submitBatch("updateGroup"),
+        ])
           .then(() => {
             MessageToast.show(
               oBundle.getText("deleteSuccess", [aContexts.length]),
@@ -618,8 +620,11 @@ sap.ui.define(
         const oBundle = this.getResourceBundle();
         const oDialog = this.byId("addProductV4Dialog");
         const oContext = oDialog.getBindingContext("odataV4Model");
+        const pCreated = oContext.created();
 
-        Promise.all([oContext.created(), oModel.submitBatch("changes")])
+        oModel
+          .submitBatch("updateGroup")
+          .then(() => pCreated)
           .then(() => {
             MessageToast.show(oBundle.getText("createSuccess"));
             oDialog.close();
