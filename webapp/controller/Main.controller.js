@@ -532,9 +532,7 @@ sap.ui.define(
 
       onDeleteV4() {
         const oBundle = this.getResourceBundle();
-        const aContexts = this.byId("productsV4Table")
-          .getSelectedItems()
-          .map((oItem) => oItem.getBindingContext("odataV4Model"));
+        const aContexts = this.byId("productsV4Table").getSelectedContexts();
 
         MessageBox.confirm(
           oBundle.getText("deleteProductsConfirm", [aContexts.length]),
@@ -553,9 +551,13 @@ sap.ui.define(
 
       _deleteV4Products(aContexts) {
         const oTable = this.byId("productsV4Table");
+        const oModel = this.getModel("odataV4Model");
         const oBundle = this.getResourceBundle();
 
-        Promise.all(aContexts.map((oContext) => oContext.delete("$auto")))
+        Promise.all([
+          ...aContexts.map((oContext) => oContext.delete()),
+          oModel.submitBatch("updateGroup"),
+        ])
           .then(() => {
             MessageToast.show(
               oBundle.getText("deleteSuccess", [aContexts.length]),
@@ -640,7 +642,11 @@ sap.ui.define(
           return;
         }
 
-        Promise.all([oContext.created(), oModel.submitBatch("changes")])
+        const pCreated = oContext.created();
+
+        oModel
+          .submitBatch("updateGroup")
+          .then(() => pCreated)
           .then(() => {
             MessageToast.show(oBundle.getText("createSuccess"));
             oDialog.close();
@@ -654,23 +660,28 @@ sap.ui.define(
         const oModel = this.getModel("odataV4Model");
         const oBundle = this.getResourceBundle();
         const oDialog = this.byId("addProductV4Dialog");
+        const fnError = () => MessageBox.error(oBundle.getText("updateError"));
 
-        if (!oModel.hasPendingChanges("changes")) {
+        if (!oModel.hasPendingChanges("updateGroup")) {
           oDialog.close();
           return;
         }
 
-        this.byId("productsV4Table")
-          .getBinding("items")
-          .attachEventOnce("patchCompleted", (oEvent) => {
-            if (oEvent.getParameter("success")) {
-              MessageToast.show(oBundle.getText("updateSuccess"));
-              oDialog.close();
-            } else {
-              MessageBox.error(oBundle.getText("updateError"));
+        oModel
+          .submitBatch("updateGroup")
+          .then(() => {
+            if (oModel.hasPendingChanges("updateGroup")) {
+              fnError();
+              return;
             }
-          });
-        oModel.submitBatch("changes");
+            MessageToast.show(oBundle.getText("updateSuccess"));
+            oDialog.close();
+          })
+          .catch(fnError);
+      },
+
+      onCancelV4() {
+        this._pAddV4Dialog.then((oDialog) => oDialog.close());
       },
 
       onAfterCloseV4Dialog(oEvent) {
@@ -683,19 +694,7 @@ sap.ui.define(
         if (oContext.isTransient()) {
           oContext.delete();
         } else {
-          oModel.resetChanges("changes");
-        }
-      },
-
-      onCancelV4() {
-        this._pAddV4Dialog.then((oDialog) => oDialog.close());
-      },
-
-      onAfterCloseV4Dialog(oEvent) {
-        const oContext = oEvent.getSource().getBindingContext("odataV4Model");
-
-        if (oContext && oContext.isTransient()) {
-          oContext.delete();
+          oModel.resetChanges("updateGroup");
         }
       },
     });
