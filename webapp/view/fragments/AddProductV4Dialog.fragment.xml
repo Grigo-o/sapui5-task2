@@ -1,0 +1,126 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+>
+    <Dialog
+        id="addProductV4Dialog"
+        title="{i18n>addProductTitle}"
+        afterClose=".onAfterCloseV4Dialog"
+    >
+        <form:SimpleForm
+            id="addProductV4Form"
+            editable="true"
+            layout="ResponsiveGridLayout"
+        >
+            <Label
+                id="lblV4ProdId"
+                text="{i18n>labelId}"
+                required="true"
+                labelFor="v4ProdId"
+            />
+            <Input
+                id="v4ProdId"
+                type="Number"
+                value="{odataV4Model>ID}"
+                valueStateText="{i18n>requiredField}"
+                liveChange=".onV4FieldChange"
+            />
+
+            <Label
+                id="lblV4ProdName"
+                text="{i18n>labelName}"
+                required="true"
+                labelFor="v4ProdName"
+            />
+            <Input
+                id="v4ProdName"
+                value="{odataV4Model>Name}"
+                valueStateText="{i18n>requiredField}"
+                liveChange=".onV4FieldChange"
+            />
+
+            <Label
+                id="lblV4ProdDesc"
+                text="{i18n>labelDescription}"
+                required="true"
+                labelFor="v4ProdDesc"
+            />
+            <Input
+                id="v4ProdDesc"
+                value="{odataV4Model>Description}"
+                valueStateText="{i18n>requiredField}"
+                liveChange=".onV4FieldChange"
+            />
+
+            <Label
+                id="lblV4ProdRelease"
+                text="{i18n>labelDate}"
+                required="true"
+                labelFor="v4ProdRelease"
+            />
+            <DatePicker
+                id="v4ProdRelease"
+                value="{path: 'odataV4Model>ReleaseDate', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {V4: true}}"
+                valueStateText="{i18n>requiredField}"
+                change=".onV4FieldChange"
+            />
+
+            <Label
+                id="lblV4ProdDiscontinued"
+                text="{i18n>labelDiscontinuedDate}"
+                required="true"
+                labelFor="v4ProdDiscontinued"
+            />
+            <DatePicker
+                id="v4ProdDiscontinued"
+                value="{path: 'odataV4Model>DiscontinuedDate', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {V4: true}}"
+                valueStateText="{i18n>requiredField}"
+                change=".onV4FieldChange"
+            />
+
+            <Label
+                id="lblV4ProdRating"
+                text="{i18n>labelRating}"
+                required="true"
+                labelFor="v4ProdRating"
+            />
+            <Input
+                id="v4ProdRating"
+                type="Number"
+                value="{odataV4Model>Rating}"
+                valueStateText="{i18n>requiredField}"
+                liveChange=".onV4FieldChange"
+            />
+
+            <Label
+                id="lblV4ProdPrice"
+                text="{i18n>labelPrice}"
+                required="true"
+                labelFor="v4ProdPrice"
+            />
+            <Input
+                id="v4ProdPrice"
+                type="Number"
+                value="{odataV4Model>Price}"
+                valueStateText="{i18n>requiredField}"
+                liveChange=".onV4FieldChange"
+            />
+        </form:SimpleForm>
+        <beginButton>
+            <Button
+                id="saveV4Btn"
+                text="{i18n>save}"
+                type="Emphasized"
+                press=".onSaveV4"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                id="cancelV4Btn"
+                text="{i18n>cancel}"
+                press=".onCancelV4"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
