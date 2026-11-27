@@ -41,6 +41,16 @@ sap.ui.define(
       "prodPrice",
     ];
 
+    const PRODUCT_V4_FIELD_IDS = [
+      "v4ProdId",
+      "v4ProdName",
+      "v4ProdDesc",
+      "v4ProdRelease",
+      "v4ProdDiscontinued",
+      "v4ProdRating",
+      "v4ProdPrice",
+    ];
+
     return BaseController.extend("tasktwo.controller.Main", {
       formatter: formatter,
 
@@ -508,6 +518,184 @@ sap.ui.define(
       _setEditMode(oEvent, bEdit) {
         const oContext = oEvent.getSource().getBindingContext();
         this.getModel().setProperty(`${oContext.getPath()}/editMode`, bEdit);
+      },
+
+      onV4SelectionChange() {
+        this._updateDeleteV4Button();
+      },
+
+      _updateDeleteV4Button() {
+        const bHasSelection =
+          this.byId("productsV4Table").getSelectedItems().length > 0;
+        this.byId("deleteV4Btn").setEnabled(bHasSelection);
+      },
+
+      onDeleteV4() {
+        const oBundle = this.getResourceBundle();
+        const aContexts = this.byId("productsV4Table").getSelectedContexts();
+
+        MessageBox.confirm(
+          oBundle.getText("deleteProductsConfirm", [aContexts.length]),
+          {
+            title: oBundle.getText("confirmTitle"),
+            actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+            emphasizedAction: MessageBox.Action.DELETE,
+            onClose: (sAction) => {
+              if (sAction === MessageBox.Action.DELETE) {
+                this._deleteV4Products(aContexts);
+              }
+            },
+          },
+        );
+      },
+
+      _deleteV4Products(aContexts) {
+        const oTable = this.byId("productsV4Table");
+        const oModel = this.getModel("odataV4Model");
+        const oBundle = this.getResourceBundle();
+
+        Promise.all([
+          ...aContexts.map((oContext) => oContext.delete()),
+          oModel.submitBatch("updateGroup"),
+        ])
+          .then(() => {
+            MessageToast.show(
+              oBundle.getText("deleteSuccess", [aContexts.length]),
+            );
+          })
+          .catch(() => {
+            MessageBox.error(oBundle.getText("deleteError"));
+          })
+          .finally(() => {
+            oTable.removeSelections(true);
+            this._updateDeleteV4Button();
+          });
+      },
+
+      onAddV4() {
+        const oListBinding = this.byId("productsV4Table").getBinding("items");
+        const oContext = oListBinding.create(
+          {
+            ID: null,
+            Name: "",
+            Description: "",
+            ReleaseDate: null,
+            DiscontinuedDate: null,
+            Rating: null,
+            Price: null,
+          },
+          true,
+        );
+        this._openV4Dialog(oContext, true);
+      },
+
+      onEditV4(oEvent) {
+        this._openV4Dialog(
+          oEvent.getSource().getBindingContext("odataV4Model"),
+          false,
+        );
+      },
+
+      _openV4Dialog(oContext, bIsCreate) {
+        const oBundle = this.getResourceBundle();
+
+        if (!this._pAddV4Dialog) {
+          this._pAddV4Dialog = this.loadFragment({
+            name: "tasktwo.view.fragments.AddProductV4Dialog",
+          });
+        }
+        this._pAddV4Dialog.then((oDialog) => {
+          oDialog.setBindingContext(oContext, "odataV4Model");
+          oDialog.setTitle(
+            oBundle.getText(bIsCreate ? "addProductTitle" : "editProductTitle"),
+          );
+          this.byId("v4ProdId").setEnabled(bIsCreate);
+          PRODUCT_V4_FIELD_IDS.forEach((sId) =>
+            this.byId(sId).setValueState("None"),
+          );
+          oDialog.open();
+        });
+      },
+
+      onV4FieldChange(oEvent) {
+        this._validateControl(oEvent.getSource());
+      },
+
+      _validateV4Form() {
+        return PRODUCT_V4_FIELD_IDS.map((sId) =>
+          this._validateControl(this.byId(sId)),
+        ).every(Boolean);
+      },
+
+      onSaveV4() {
+        if (!this._validateV4Form()) {
+          return;
+        }
+
+        const oModel = this.getModel("odataV4Model");
+        const oBundle = this.getResourceBundle();
+        const oDialog = this.byId("addProductV4Dialog");
+        const oContext = oDialog.getBindingContext("odataV4Model");
+
+        if (!oContext.isTransient()) {
+          this._updateV4Product();
+          return;
+        }
+
+        const pCreated = oContext.created();
+
+        oModel
+          .submitBatch("updateGroup")
+          .then(() => pCreated)
+          .then(() => {
+            MessageToast.show(oBundle.getText("createSuccess"));
+            oDialog.close();
+          })
+          .catch(() => {
+            MessageBox.error(oBundle.getText("createError"));
+          });
+      },
+
+      _updateV4Product() {
+        const oModel = this.getModel("odataV4Model");
+        const oBundle = this.getResourceBundle();
+        const oDialog = this.byId("addProductV4Dialog");
+        const fnError = () => MessageBox.error(oBundle.getText("updateError"));
+
+        if (!oModel.hasPendingChanges("updateGroup")) {
+          oDialog.close();
+          return;
+        }
+
+        oModel
+          .submitBatch("updateGroup")
+          .then(() => {
+            if (oModel.hasPendingChanges("updateGroup")) {
+              fnError();
+              return;
+            }
+            MessageToast.show(oBundle.getText("updateSuccess"));
+            oDialog.close();
+          })
+          .catch(fnError);
+      },
+
+      onCancelV4() {
+        this._pAddV4Dialog.then((oDialog) => oDialog.close());
+      },
+
+      onAfterCloseV4Dialog(oEvent) {
+        const oModel = this.getModel("odataV4Model");
+        const oContext = oEvent.getSource().getBindingContext("odataV4Model");
+
+        if (!oContext) {
+          return;
+        }
+        if (oContext.isTransient()) {
+          oContext.delete();
+        } else {
+          oModel.resetChanges("updateGroup");
+        }
       },
     });
   },

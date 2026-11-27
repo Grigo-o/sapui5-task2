@@ -335,8 +335,25 @@
                 >
                     <Table
                         id="productsV4Table"
-                        items="{odataV4Model>/Products}"
+                        items="{path: 'odataV4Model>/Products', parameters: {$$updateGroupId: 'updateGroup'}}"
+                        mode="MultiSelect"
+                        selectionChange=".onV4SelectionChange"
                     >
+                        <headerToolbar>
+                            <Toolbar id="v4Toolbar">
+                                <Button
+                                    id="addV4Btn"
+                                    text="{i18n>addRecord}"
+                                    press=".onAddV4"
+                                />
+                                <Button
+                                    id="deleteV4Btn"
+                                    text="{i18n>delete}"
+                                    enabled="false"
+                                    press=".onDeleteV4"
+                                />
+                            </Toolbar>
+                        </headerToolbar>
                         <columns>
                             <Column id="v4ColId">
                                 <Text
@@ -380,6 +397,12 @@
                                     text="{i18n>labelPrice}"
                                 />
                             </Column>
+                            <Column id="v4ColActions">
+                                <Text
+                                    id="v4HdrActions"
+                                    text="{i18n>actions}"
+                                />
+                            </Column>
                         </columns>
                         <items>
                             <ColumnListItem id="v4Item">
@@ -410,6 +433,11 @@
                                 <Text
                                     id="v4TxtPrice"
                                     text="{odataV4Model>Price}"
+                                />
+                                <Button
+                                    id="v4EditBtn"
+                                    text="{i18n>edit}"
+                                    press=".onEditV4"
                                 />
                             </ColumnListItem>
                         </items>
